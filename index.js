@@ -2,9 +2,9 @@ const express = require('express')
 const mycors = require('cors')
 const multer = require('multer')
 const sharp = require('sharp')
-const fs = require('fs')
 const path = require('path')
 const upload = multer({ dest: 'temp/' })
+const fs = require('fs')
 const app = express()
 const port = 3000
 const db = []
@@ -17,7 +17,8 @@ app.use(
 
 app.use(
   mycors({
-    origin: '*',
+    origin: 'http://localhost:4000',
+    optionsSuccessStatus: 200,
     methods: ['GET', 'POST']
   })
 )
@@ -32,6 +33,7 @@ app.use(
 
 // Cuando te hagan un post http://localhost:3000/transactions
 app.post('/upload', upload.single('file'), (req, res) => {
+  // res.set('Access-Control-Allow-Origin', 'http://localhost:4000')
   const file = req.file
   db.push(file)
 
@@ -53,6 +55,7 @@ app.post('/props', express.json(), (req, res) => {
   console.log(props)
   const pathRes = `temp\\${props.filename}`
   const pathSave = `./image/${props.filename}.${props.format}`
+  const pathImage = path.join(__dirname, pathSave)
   const resolution = { width: props.width, height: props.height }
 
   fs.readFile(pathRes, (err, buffer) => {
@@ -64,13 +67,9 @@ app.post('/props', express.json(), (req, res) => {
     sharp(buffer, { animated: props.format === 'gif' || props.format === 'webp' })
       .resize(resolution)
       .toFile(pathSave)
-      .then(() => {
-        console.log('first')
-      })
+      .then(() => res.sendFile(pathImage)
+      )
   })
-
-  const imagePath = path.join(__dirname, pathSave)
-  res.sendFile(imagePath)
 })
 
 app.listen(port, () => {
