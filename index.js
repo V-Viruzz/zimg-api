@@ -27,10 +27,6 @@ app.use(
 //   type: '*/*'
 // }))
 
-// app.get('/test', (req, res) => {
-//   res.send(JSON.stringify(db))
-// })
-
 // Cuando te hagan un post http://localhost:3000/transactions
 app.post('/upload', upload.single('file'), (req, res) => {
   // res.set('Access-Control-Allow-Origin', 'http://localhost:4000')
