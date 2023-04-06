@@ -1,12 +1,24 @@
+const fs = require('fs')
+
+if (fs.existsSync('templates')) {
+  console.log('el directorio ya existe')
+} else {
+  fs.mkdir('temp', (err) => {
+    if (err) {
+      console.log(err.message)
+    }
+    console.log('directorio creado')
+  })
+}
+
 const express = require('express')
 const mycors = require('cors')
 const multer = require('multer')
 const sharp = require('sharp')
 const path = require('path')
 const upload = multer({ dest: 'temp/' })
-const fs = require('fs')
 const app = express()
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3000
 const db = []
 
 app.use(
