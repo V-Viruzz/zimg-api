@@ -1,16 +1,4 @@
 const fs = require('fs')
-
-if (fs.existsSync('templates')) {
-  console.log('el directorio ya existe')
-} else {
-  fs.mkdir('temp', (err) => {
-    if (err) {
-      console.log(err.message)
-    }
-    console.log('directorio creado')
-  })
-}
-
 const express = require('express')
 const mycors = require('cors')
 const multer = require('multer')
