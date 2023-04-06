@@ -4,7 +4,7 @@ const mycors = require('cors')
 const multer = require('multer')
 const sharp = require('sharp')
 const path = require('path')
-const upload = multer({ dest: 'temp/' })
+const upload = multer({ dest: 'tmp/' })
 const app = express()
 const port = process.env.PORT || 3000
 const db = []
@@ -49,7 +49,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
 app.post('/props', express.json(), (req, res) => {
   const props = req.body
   console.log(props)
-  const pathRes = `temp\\${props.filename}`
+  const pathRes = `tmp\\${props.filename}`
   const pathSave = `./image/${props.filename}.${props.format}`
   const pathImage = path.join(__dirname, pathSave)
   const resolution = { width: props.width, height: props.height }
