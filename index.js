@@ -6,7 +6,7 @@ const path = require('path')
 const upload = multer({ dest: 'temp/' })
 const fs = require('fs')
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3001
 const db = []
 
 app.use(
