@@ -72,14 +72,14 @@ app.listen(port, () => {
   console.log(`Estoy ejecutandome en http://localhost:${port}`)
 })
 
-setInterval(() => {
-  console.log('cleanup')
-  db.forEach((item) => {
-    const pathTemp = path.join(__dirname, `./temp/${item.filename}`)
-    fs.unlink(pathTemp, (err) => {
-      if (err) {
-        console.error('Error al eliminar archivo:')
-      }
-    })
-  })
-}, 10 * 60 * 1000)
+// setInterval(() => {
+//   console.log('cleanup')
+//   db.forEach((item) => {
+//     const pathTemp = path.join(__dirname, `./temp/${item.filename}`)
+//     fs.unlink(pathTemp, (err) => {
+//       if (err) {
+//         console.error('Error al eliminar archivo:')
+//       }
+//     })
+//   })
+// }, 10 * 60 * 1000)
