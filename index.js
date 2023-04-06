@@ -1,5 +1,5 @@
 const express = require('express')
-const mycors = require('cors')
+// const mycors = require('cors')
 // const multer = require('multer')
 // const sharp = require('sharp')
 // const path = require('path')
@@ -15,13 +15,13 @@ app.use(
   })
 )
 
-app.use(
-  mycors({
-    origin: 'http://localhost:4000',
-    optionsSuccessStatus: 200,
-    methods: ['GET', 'POST']
-  })
-)
+// app.use(
+//   mycors({
+//     origin: 'http://localhost:4000',
+//     optionsSuccessStatus: 200,
+//     methods: ['GET', 'POST']
+//   })
+// )
 
 // app.use(express.json({
 //   type: '*/*'
