@@ -4,10 +4,12 @@ const mycors = require('cors')
 const multer = require('multer')
 const sharp = require('sharp')
 const path = require('path')
-const upload = multer({ dest: 'tmp/' })
+const upload = multer()
 const app = express()
 const port = process.env.PORT || 3000
 const db = []
+
+let writeStream
 
 app.use(
   express.urlencoded({
@@ -32,8 +34,12 @@ app.post('/upload', upload.single('file'), (req, res) => {
   // res.set('Access-Control-Allow-Origin', 'http://localhost:4000')
   const file = req.file
   db.push(file)
-
   console.log(file)
+  writeStream = fs.createWriteStream(`./tmp/${file.originalname}`)
+
+  writeStream.on('finish', function () {
+    console.log('leyendo')
+  })
 
   if (!file) {
     res.status(400).send('No file uploaded.')
@@ -42,30 +48,32 @@ app.post('/upload', upload.single('file'), (req, res) => {
 
   res.send({
     message: 'File uploaded successfully.',
-    filename: file.filename
+    filename: file.originalname
   })
 })
 
 app.post('/props', express.json(), (req, res) => {
   const props = req.body
-  console.log(props)
+  console.log(props.filename)
   const pathRes = `tmp\\${props.filename}`
   const pathSave = `./image/${props.filename}.${props.format}`
   const pathImage = path.join(__dirname, pathSave)
   const resolution = { width: props.width, height: props.height }
 
-  fs.readFile(pathRes, (err, buffer) => {
-    if (err) {
-      console.error(err)
-    }
+  const image = db.find(item => item.originalname === props.filename)
+  console.log('Image buffer', image.buffer)
+  // fs.readFile(pathRes, (err, buffer) => {
+  // if (err) {
+  //   console.error(err)
+  // }
 
-    // Hacer lo que necesites con el buffer de la imagen
-    sharp(buffer, { animated: props.format === 'gif' || props.format === 'webp' })
-      .resize(resolution)
-      .toFile(pathSave)
-      .then(() => res.sendFile(pathImage)
-      )
-  })
+  // Hacer lo que necesites con el buffer de la imagen
+  sharp(image.buffer, { animated: props.format === 'gif' || props.format === 'webp' })
+    .resize(resolution)
+    .toFile(pathSave)
+    .then(() => res.sendFile(pathImage)
+    )
+  // })
 })
 
 app.listen(port, () => {
