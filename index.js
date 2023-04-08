@@ -4,12 +4,13 @@ const mycors = require('cors')
 const multer = require('multer')
 const sharp = require('sharp')
 const path = require('path')
+const Jimp = require('jimp')
 
 const upload = multer()
 const app = express()
 const port = process.env.PORT || 3000
-// const URL = 'http://localhost:4000'
-const URL = 'https://zimg-x.vercel.app'
+const URL = 'http://localhost:4000'
+// const URL = 'https://zimg-x.vercel.app'
 const db = []
 
 app.use(
@@ -37,11 +38,6 @@ app.post('/upload', upload.single('file'), (req, res) => {
   db.push(file)
   console.log(file)
 
-  fs.writeFile(`./tmp/${file.originalname}`, file.buffer, (error) => {
-    if (error) throw error
-    console.log('Archivo creado exitosamente!')
-  })
-
   if (!file) {
     res.status(400).send('No file uploaded.')
     return
@@ -61,21 +57,26 @@ app.post('/props', express.json(), (req, res) => {
   const pathImage = path.join(__dirname, pathSave)
   const resolution = { width: props.width, height: props.height }
 
-  console.log(pathRes)
-  // const image = db.find(item => item.originalname === props.filename)
-  // console.log('Image buffer', image.buffer)
-  fs.readFile(pathRes, (err, buffer) => {
-    if (err) {
-      console.error(err)
-    }
-    console.log(buffer)
-    // Hacer lo que necesites con el buffer de la imagen
-    sharp(buffer, { animated: props.format === 'gif' || props.format === 'webp' })
-      .resize(resolution)
-      .toFile(pathSave)
-      .then(() => res.sendFile(pathImage)
-      )
-  })
+  const image = db.find(item => item.originalname === props.filename)
+
+  // fs.readFile(pathRes, (err, buffer) => {
+  //   if (err) {
+  //     console.error(err)
+  //   }
+
+  // Hacer lo que necesites con el buffer de la imagen
+  sharp(image.buffer, { animated: props.format === 'gif' || props.format === 'webp' })
+    .resize(resolution)
+    .toBuffer((err, data, info) => {
+      if (err) console.log(err)
+      console.log('convert image buffer', info)
+
+      res.send(data)
+    })
+    // .toFile(pathSave)
+    // .then(() => res.sendFile(pathImage)
+
+  // })
 })
 
 app.listen(port, () => {
