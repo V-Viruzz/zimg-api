@@ -1,16 +1,14 @@
-const fs = require('fs')
 const express = require('express')
 const mycors = require('cors')
 const multer = require('multer')
 const sharp = require('sharp')
 const path = require('path')
-const Jimp = require('jimp')
 
 const upload = multer()
 const app = express()
 const port = process.env.PORT || 3000
-const URL = 'http://localhost:4000'
-// const URL = 'https://zimg-x.vercel.app'
+// const URL = 'http://localhost:4000'
+const URL = 'https://zimg-x.vercel.app'
 const db = []
 
 app.use(
