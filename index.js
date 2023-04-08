@@ -38,11 +38,8 @@ app.post('/upload', upload.single('file'), (req, res) => {
   console.log(file)
 
   fs.writeFile(`./tmp/${file.originalname}`, file.buffer, (error) => {
-    if (error) {
-      console.error('Error al escribir el archivo:', error)
-    } else {
-      console.log('Archivo creado exitosamente')
-    }
+    if (error) throw error
+    console.log('Archivo creado exitosamente!')
   })
 
   if (!file) {
