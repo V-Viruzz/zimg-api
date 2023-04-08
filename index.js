@@ -9,7 +9,7 @@ const upload = multer()
 const app = express()
 const port = process.env.PORT || 3000
 // const URL = 'http://localhost:4000'
-const URL = 'https://zimg-9id2mhqxg-viruzzz0.vercel.app'
+const URL = 'https://zimg-x.vercel.app'
 const db = []
 
 app.use(
