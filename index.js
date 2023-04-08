@@ -4,12 +4,13 @@ const mycors = require('cors')
 const multer = require('multer')
 const sharp = require('sharp')
 const path = require('path')
+
 const upload = multer()
 const app = express()
 const port = process.env.PORT || 3000
+// const URL = 'http://localhost:4000'
+const URL = 'https://zimg-9id2mhqxg-viruzzz0.vercel.app'
 const db = []
-
-let writeStream
 
 app.use(
   express.urlencoded({
@@ -19,7 +20,7 @@ app.use(
 
 app.use(
   mycors({
-    origin: 'http://localhost:4000',
+    origin: URL,
     optionsSuccessStatus: 200,
     methods: ['GET', 'POST']
   })
@@ -35,10 +36,13 @@ app.post('/upload', upload.single('file'), (req, res) => {
   const file = req.file
   db.push(file)
   console.log(file)
-  writeStream = fs.createWriteStream(`./tmp/${file.originalname}`)
 
-  writeStream.on('finish', function () {
-    console.log('leyendo')
+  fs.writeFile(`./tmp/${file.originalname}`, file.buffer, (error) => {
+    if (error) {
+      console.error('Error al escribir el archivo:', error)
+    } else {
+      console.log('Archivo creado exitosamente')
+    }
   })
 
   if (!file) {
@@ -54,26 +58,27 @@ app.post('/upload', upload.single('file'), (req, res) => {
 
 app.post('/props', express.json(), (req, res) => {
   const props = req.body
-  console.log(props.filename)
-  const pathRes = `tmp\\${props.filename}`
+
+  const pathRes = `./tmp/${props.filename}`
   const pathSave = `./image/${props.filename}.${props.format}`
   const pathImage = path.join(__dirname, pathSave)
   const resolution = { width: props.width, height: props.height }
 
-  const image = db.find(item => item.originalname === props.filename)
-  console.log('Image buffer', image.buffer)
-  // fs.readFile(pathRes, (err, buffer) => {
-  // if (err) {
-  //   console.error(err)
-  // }
-
-  // Hacer lo que necesites con el buffer de la imagen
-  sharp(image.buffer, { animated: props.format === 'gif' || props.format === 'webp' })
-    .resize(resolution)
-    .toFile(pathSave)
-    .then(() => res.sendFile(pathImage)
-    )
-  // })
+  console.log(pathRes)
+  // const image = db.find(item => item.originalname === props.filename)
+  // console.log('Image buffer', image.buffer)
+  fs.readFile(pathRes, (err, buffer) => {
+    if (err) {
+      console.error(err)
+    }
+    console.log(buffer)
+    // Hacer lo que necesites con el buffer de la imagen
+    sharp(buffer, { animated: props.format === 'gif' || props.format === 'webp' })
+      .resize(resolution)
+      .toFile(pathSave)
+      .then(() => res.sendFile(pathImage)
+      )
+  })
 })
 
 app.listen(port, () => {
