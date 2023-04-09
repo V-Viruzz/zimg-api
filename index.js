@@ -2,12 +2,14 @@ import express, { urlencoded, json } from 'express'
 import mycors from 'cors'
 import multer from 'multer'
 import sharp from 'sharp'
+import { config } from 'dotenv'
+
+config()
 
 const upload = multer()
 const app = express()
-const port = process.env.PORT || 3000
-// const URL = 'http://localhost:4000'
-const URL = 'https://zimg-x.vercel.app'
+const port = process.env.PORT || 3001
+const URL = process.env.URL_FRONTEND
 const db = []
 
 app.use(
