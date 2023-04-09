@@ -21,7 +21,7 @@ app.use(
 app.use(
   mycors({
     origin: URL,
-    optionsSuccessStatus: 200,
+    // optionsSuccessStatus: 200,
     methods: ['GET', 'POST']
   })
 )
