@@ -3,14 +3,18 @@ import mycors from 'cors'
 import multer from 'multer'
 import sharp from 'sharp'
 import { config } from 'dotenv'
+import File from './models/saveFile.js'
+import ServerConnection from './database.js'
 
+// Configura la conexión a MongoDB Atlas
 config()
+
+ServerConnection()
 
 const upload = multer()
 const app = express()
 const port = process.env.PORT || 3001
 const URL = process.env.URL_FRONTEND
-const db = []
 
 app.use(
   urlencoded({
@@ -33,35 +37,50 @@ app.use(
 // Cuando te hagan un post http://localhost:3000/transactions
 app.post('/upload', upload.single('file'), (req, res) => {
   const file = req.file
-  db.push(file)
   console.log(file)
 
-  if (!file) {
-    res.status(400).send('No file uploaded.')
-    return
-  }
+  if (!file) return res.status(400).send('No file uploaded.')
 
-  res.send({
-    message: 'File uploaded successfully.',
-    filename: file.originalname
+  const newFile = new File({
+    name: 'nameImage',
+    ...file
   })
+
+  newFile
+    .save()
+    .then(() => console.log('File saved!'))
+    .then(() => {
+      res.send({
+        message: 'File uploaded successfully.',
+        filename: file.originalname,
+        id: newFile._id
+      })
+    })
+    .catch(err => console.error('Error saving file', err))
 })
 
-app.post('/props', json(), (req, res) => {
-  const props = req.body
+app.post('/props', json(), async (req, res) => {
+  try {
+    const props = req.body
+    console.log(props)
 
-  const resolution = { width: props.width, height: props.height }
-  const image = db.find(item => item.originalname === props.filename)
+    const data = await File.findOne({ _id: `${props.id}` })
+    const buffer = Buffer.from(data.buffer)
 
-  // Hacer lo que necesites con el buffer de la imagen
-  sharp(image.buffer, { animated: props.format === 'gif' || props.format === 'webp' })
-    .resize(resolution)
-    .toBuffer((err, data, info) => {
-      if (err) console.log(err)
-      console.log('convert image buffer', info)
+    const resolution = { width: props.width, height: props.height }
 
-      res.send(data)
-    })
+    // Hacer lo que necesites con el buffer de la imagen
+    sharp(buffer, { animated: props.format === 'gif' || props.format === 'webp' })
+      .resize(resolution)
+      .toBuffer((err, data, info) => {
+        if (err) console.log(err)
+        console.log('Convert image buffer', info)
+
+        res.send(data)
+      })
+  } catch (err) {
+    console.error(err)
+  }
 })
 
 app.listen(port, () => {
