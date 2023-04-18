@@ -59,7 +59,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
     .catch(err => console.error('Error saving file', err))
 })
 
-app.post('/props', json(), async (req, res) => {
+app.get('/props', json(), async (req, res) => {
   try {
     const props = req.body
     console.log(props)
