@@ -65,11 +65,10 @@ app.post('/props', json(), async (req, res) => {
     console.log(props)
 
     const data = await File.findOne({ _id: `${props.id}` })
-    const buffer = Buffer.from(data.buffer)
+    const buffer = await Buffer.from(data.buffer)
 
     const resolution = { width: props.width, height: props.height }
 
-    console.log('buffer recibido', buffer)
     // Hacer lo que necesites con el buffer de la imagen
     sharp(buffer, { animated: props.format === 'gif' || props.format === 'webp' })
       .resize(resolution)
@@ -79,7 +78,6 @@ app.post('/props', json(), async (req, res) => {
 
         res.send(data)
       })
-      .catch(err => console.error(err))
   } catch (err) {
     console.error(err)
   }
