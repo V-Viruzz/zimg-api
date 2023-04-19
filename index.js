@@ -59,13 +59,13 @@ app.post('/upload', upload.single('file'), (req, res) => {
     .catch(err => console.error('Error saving file', err))
 })
 
-app.get('/props', json(), async (req, res) => {
+app.post('/props', json(), async (req, res) => {
   try {
     const props = req.body
     console.log(props)
 
     const data = await File.findOne({ _id: `${props.id}` })
-    const buffer = await Buffer.from(data.buffer)
+    const buffer = Buffer.from(data.buffer)
 
     const resolution = { width: props.width, height: props.height }
 
