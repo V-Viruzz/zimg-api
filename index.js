@@ -73,7 +73,7 @@ app.post('/props', json(), async (req, res) => {
     sharp(buffer, { animated: props.format === 'gif' || props.format === 'webp' })
       .resize(resolution)
       .toBuffer((err, data, info) => {
-        if (err) console.log(err)
+        if (err) return console.log(err)
         console.log('Convert image buffer', info)
 
         res.send(data)
