@@ -30,10 +30,6 @@ app.use(
   })
 )
 
-// app.use(express.json({
-//   type: '*/*'
-// }))
-
 // Cuando te hagan un post http://localhost:3000/transactions
 app.post('/upload', upload.single('file'), (req, res) => {
   const file = req.file
@@ -74,7 +70,6 @@ app.post('/props', json(), async (req, res) => {
       .resize(resolution)
       .toBuffer((err, data, info) => {
         if (err) return console.log(err)
-        console.log('Convert image buffer', info)
 
         res.send(data)
       })
